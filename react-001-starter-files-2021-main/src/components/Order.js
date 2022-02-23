@@ -1,4 +1,5 @@
 import React from "react";
+import Shipment from "./Shipment";
 
 class Order extends React.Component {
   renderOrder = (key) => {
@@ -8,24 +9,26 @@ class Order extends React.Component {
     if (!isAvailable) {
       return (
         <li className="unavailable" key={key}>
-          {burger ? burger.name : "Бургер"} временно недоступен
+          {burger ? burger.name : "Бургер"} временно недоступен.
         </li>
       );
     }
+
     return (
       <li key={key}>
         <span>
           <span>{count}</span>
           шт. {burger.name}
-          <span>{count * burger.price}₽</span>
+          <span> {burger.price * count}₽</span>
           <button className="cancelItem">&times;</button>
         </span>
       </li>
     );
   };
+
   render() {
-    const orderId = Object.keys(this.props.order);
-    const total = orderId.reduce((prevTotal, key) => {
+    const ordersId = Object.keys(this.props.order);
+    const total = ordersId.reduce((prevTotal, key) => {
       const burger = this.props.burgers[key];
       const count = this.props.order[key];
       const isAvailable = burger && burger.status === "available";
@@ -38,14 +41,14 @@ class Order extends React.Component {
     return (
       <div className="order-wrap">
         <h2>Ваш заказ</h2>
-        <ul className="order">{orderId.map(this.renderOrder)}</ul>
-        <div className="total">
-          <div className="total_wrap">
-            <div className="total_wrap-final">
-              Итого: {total}₽
-            </div>
+        <ul className="order">{ordersId.map(this.renderOrder)}</ul>
+        {total > 0 ? (
+          <Shipment total={total} />
+        ) : (
+          <div className="NothingSelected">
+            Выберите блюдо и добавьте к заказу
           </div>
-        </div>
+        )}
       </div>
     );
   }

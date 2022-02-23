@@ -13,15 +13,28 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    const {params} = this.props.match
+    const { params } = this.props.match;
+    const localStorageRef = localStorage.getItem(params.restaurant_id);
+    if (localStorageRef) {
+      this.setState({ order: JSON.parse(localStorageRef) });
+    }
     this.ref = base.syncState(`${params.restaurant_id}/burgers`, {
       context: this,
-      state: 'burgers'
-    })
+      state: "burgers",
+    });
+  }
+
+  componentDidUpdate() {
+    const { params } = this.props.match;
+    console.log("updated!");
+    localStorage.setItem(
+      params.restaurant_id,
+      JSON.stringify(this.state.order)
+    );
   }
 
   componentWillUnmount() {
-    base.removeBinding(this.ref)
+    base.removeBinding(this.ref);
   }
 
   addBurger = (burger) => {
@@ -39,6 +52,24 @@ class App extends React.Component {
     order[key] = order[key] + 1 || 1;
     this.setState({ order });
   };
+
+  updateBurger = (key, updatedBurger) => {
+    const burgers = {...this.state.burgers}
+    burgers[key] = updatedBurger
+    this.setState({burgers})
+  }
+
+  deleteBurger = (key) => {
+    const burgers = {...this.state.burgers}
+    burgers[key] = null
+    this.setState({burgers})
+  }
+
+  deleteFromOrder = (key) => {
+    const order = {...this.state.order}
+    delete order[key]
+    this.setState({order})
+  }
 
   render() {
     return (
@@ -58,10 +89,13 @@ class App extends React.Component {
             })}
           </ul>
         </div>
-        <Order burgers={this.state.burgers} order={this.state.order} />
+        <Order deleteFromOrder={this.deleteFromOrder} burgers={this.state.burgers} order={this.state.order} />
         <MenuAdmin
           loadSampleBurgers={this.loadSampleBurgers}
           addBurger={this.addBurger}
+          burgers={this.state.burgers}
+          updateBurger={this.updateBurger}
+          deleteBurger={this.deleteBurger}
         />
       </div>
     );

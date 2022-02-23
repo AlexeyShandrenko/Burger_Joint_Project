@@ -12,12 +12,13 @@ class AddBurgerForm extends React.Component {
         event.preventDefault();
         const burger = {
             name: this.nameRef.current.value,
-            price: parseFloat(this.priceRef.current.value),
+            price: parseFloat(this.priceRef.current.value || 0),
             status: this.statusRef.current.value,
             desc: this.descRef.current.value,
             image: this.imageRef.current.value
         }
         this.props.addBurger(burger)
+        event.currentTraget.reset()
     }
 
   render() {

@@ -6,21 +6,26 @@ import sampleBurgers from "../sample-burgers";
 import Burger from "./Burger";
 
 class App extends React.Component {
-
   state = {
     burgers: {},
-    order: {}
-  }
+    order: {},
+  };
 
   addBurger = (burger) => {
-    const burgers = {...this.state.burgers}
-    burgers[`burger${Date.now()}`] = burger
-    this.setState({burgers})
-  }
+    const burgers = { ...this.state.burgers };
+    burgers[`burger${Date.now()}`] = burger;
+    this.setState({ burgers });
+  };
 
   loadSampleBurgers = () => {
-    this.setState({burgers: sampleBurgers})
-  }
+    this.setState({ burgers: sampleBurgers });
+  };
+
+  addToOrder = (key) => {
+    const order = { ...this.state.order };
+    order[key] = order[key] + 1 || 1;
+    this.setState({ order });
+  };
 
   render() {
     return (
@@ -29,12 +34,22 @@ class App extends React.Component {
           <Header title="Very Hot Burgers" />
           <ul className="burgers">
             {Object.keys(this.state.burgers).map((key) => {
-              return <Burger key={key} index={key} details={this.state.burgers[key]} />
+              return (
+                <Burger
+                  key={key}
+                  index={key}
+                  details={this.state.burgers[key]}
+                  addToOrder={this.addToOrder}
+                />
+              );
             })}
           </ul>
         </div>
-        <Order />
-        <MenuAdmin loadSampleBurgers={this.loadSampleBurgers} addBurger={this.addBurger}/>
+        <Order burgers={this.state.burgers} order={this.state.order} />
+        <MenuAdmin
+          loadSampleBurgers={this.loadSampleBurgers}
+          addBurger={this.addBurger}
+        />
       </div>
     );
   }

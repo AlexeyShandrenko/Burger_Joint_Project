@@ -5,8 +5,14 @@ import MenuAdmin from "./MenuAdmin";
 import sampleBurgers from "../sample-burgers";
 import Burger from "./Burger";
 import base from "../base";
+import PropTypes from "prop-types";
 
 class App extends React.Component {
+
+  static propTypes = {
+    match: PropTypes.object
+  }
+
   state = {
     burgers: {},
     order: {},
@@ -26,7 +32,6 @@ class App extends React.Component {
 
   componentDidUpdate() {
     const { params } = this.props.match;
-    console.log("updated!");
     localStorage.setItem(
       params.restaurant_id,
       JSON.stringify(this.state.order)
@@ -75,7 +80,7 @@ class App extends React.Component {
     return (
       <div className="burger-paradise">
         <div className="menu">
-          <Header title="Very Hot Burgers" />
+          <Header title='Hot Burgers' />
           <ul className="burgers">
             {Object.keys(this.state.burgers).map((key) => {
               return (

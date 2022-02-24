@@ -3,17 +3,10 @@ import PropTypes from "prop-types";
 import Shipment from "./Shipment";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 
-class Order extends React.Component {
-
-  static propTypes = {
-    deleteFromOrder: PropTypes.func,
-    burgers: PropTypes.object,
-    order: PropTypes.object
-  }
-
-  renderOrder = (key) => {
-    const burger = this.props.burgers[key];
-    const count = this.props.order[key];
+const Order = (props) => {
+  const renderOrder = (key) => {
+    const burger = props.burgers[key];
+    const count = props.order[key];
     const isAvailable = burger && burger.status === "available";
     if (!burger) {
       return null;
@@ -52,7 +45,7 @@ class Order extends React.Component {
             шт. {burger.name}
             <span> {burger.price * count}₽</span>
             <button
-              onClick={() => this.props.deleteFromOrder(key)}
+              onClick={() => props.deleteFromOrder(key)}
               className="cancelItem"
             >
               &times;
@@ -63,34 +56,38 @@ class Order extends React.Component {
     );
   };
 
-  render() {
-    const ordersId = Object.keys(this.props.order);
-    const total = ordersId.reduce((prevTotal, key) => {
-      const burger = this.props.burgers[key];
-      const count = this.props.order[key];
-      const isAvailable = burger && burger.status === "available";
-      if (isAvailable) {
-        return prevTotal + burger.price * count;
-      }
-      return prevTotal;
-    }, 0);
+  const ordersId = Object.keys(props.order);
+  const total = ordersId.reduce((prevTotal, key) => {
+    const burger = props.burgers[key];
+    const count = props.order[key];
+    const isAvailable = burger && burger.status === "available";
+    if (isAvailable) {
+      return prevTotal + burger.price * count;
+    }
+    return prevTotal;
+  }, 0);
 
-    return (
-      <div className="order-wrap">
-        <h2>Ваш заказ</h2>
-        <TransitionGroup component="ul" className="order">
-          {ordersId.map(this.renderOrder)}
-        </TransitionGroup>
-        {total > 0 ? (
-          <Shipment total={total} />
-        ) : (
-          <div className="NothingSelected">
-            Выберите блюдо и добавьте к заказу
-          </div>
-        )}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="order-wrap">
+      <h2>Ваш заказ</h2>
+      <TransitionGroup component="ul" className="order">
+        {ordersId.map(renderOrder)}
+      </TransitionGroup>
+      {total > 0 ? (
+        <Shipment total={total} />
+      ) : (
+        <div className="NothingSelected">
+          Выберите блюдо и добавьте к заказу
+        </div>
+      )}
+    </div>
+  );
+};
+
+Order.propTypes = {
+  deleteFromOrder: PropTypes.func,
+  burgers: PropTypes.object,
+  order: PropTypes.object,
+};
 
 export default Order;
